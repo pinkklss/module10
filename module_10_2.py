@@ -1,9 +1,10 @@
 from threading import Thread
 import time
 
+enemies = 100
+
 
 class Knight(Thread):
-    enemies = 100
 
     def __init__(self, name, power):
         super().__init__()
@@ -13,14 +14,14 @@ class Knight(Thread):
 
     def run(self):
         print(f"{self.name}, на нас напали!")
-
-        while Knight.enemies > 0:
+        global enemies
+        while enemies > 0:
             time.sleep(1)
             self.days += 1
-            Knight.enemies -= self.power
-            if Knight.enemies < 0:
-                Knight.enemies = 0
-            print(f"{self.name} сражается {self.days} день(дня)..., осталось {Knight.enemies} воинов.")
+            enemies -= self.power
+            if enemies < 0:
+                enemies = 0
+            print(f"{self.name} сражается {self.days} день(дня)..., осталось {enemies} воинов.")
         print(f"{self.name} одержал победу спустя {self.days} день(дня)!")
 
 
