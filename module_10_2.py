@@ -1,7 +1,8 @@
-from threading import Thread
-import time
+from threading import Thread, Lock
+from time import sleep
 
-enemies = 100
+
+s_print_lock = Lock()
 
 
 class Knight(Thread):
@@ -13,16 +14,18 @@ class Knight(Thread):
         self.days = 0
 
     def run(self):
-        print(f"{self.name}, на нас напали!")
-        global enemies
+        print(f'{self.name}, на нас напали!', flush=True)
+        enemies = 100
+        counter_days = 0
         while enemies > 0:
-            time.sleep(1)
-            self.days += 1
-            enemies -= self.power
-            if enemies < 0:
-                enemies = 0
-            print(f"{self.name} сражается {self.days} день(дня)..., осталось {enemies} воинов.")
-        print(f"{self.name} одержал победу спустя {self.days} день(дня)!")
+            enemies -= min(self.power, enemies)
+            counter_days += 1
+            sleep(1)
+            with s_print_lock:
+                print(f'{self.name} сражается {counter_days} день(дня)...,  осталось {enemies} воинов.',
+                      flush=True)
+        with s_print_lock:
+            print(f'{self.name} одержал победу спустя {counter_days} дней(дня)!', flush=True)
 
 
 knight1 = Knight("Sir Lancelot", 5)
